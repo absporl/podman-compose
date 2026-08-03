@@ -4,9 +4,12 @@ import subprocess
 import unittest
 from typing import Union
 
+import yaml
 from parameterized import parameterized
 
+from podman_compose import OverrideTag
 from podman_compose import PodmanComposeError
+from podman_compose import rec_subs
 from podman_compose import var_interpolate
 
 
@@ -230,3 +233,11 @@ class TestVarInterpolate(unittest.TestCase):
             self.assertNotEqual(exit_code, 0, msg=error_msg)
         else:
             self.assertEqual(shell_result, expected)
+
+    def test_rec_subs_interpolates_override_tag_value(self):
+        compose = yaml.safe_load("messages: !override ['Hello ${NAME}']")
+
+        result = rec_subs(compose, {"NAME": "Alice"})
+
+        self.assertIsInstance(result["messages"], OverrideTag)
+        self.assertEqual(result["messages"].value, ["Hello Alice"])
