@@ -474,7 +474,9 @@ def rec_subs(value: dict | str | Iterable, subs_dict: dict[str, Any]) -> dict | 
     """
     do bash-like substitution in value and if list of dictionary do that recursively
     """
-    if isinstance(value, dict):
+    if isinstance(value, OverrideTag):
+        value.value = rec_subs(value.value, subs_dict)  # type: ignore[assignment]
+    elif isinstance(value, dict):
         if 'environment' in value and isinstance(value['environment'], dict):
             # Load service's environment variables
             subs_dict = subs_dict.copy()

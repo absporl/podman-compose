@@ -1,0 +1,1 @@
+Interpolate variables in ``!override`` values before merging multiple Compose files.
